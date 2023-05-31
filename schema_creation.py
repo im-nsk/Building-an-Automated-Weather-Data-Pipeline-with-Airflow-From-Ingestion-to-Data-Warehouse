@@ -1,27 +1,22 @@
 # import required module
 import psycopg2 as pg
-# import configparser as config
+import configparser as config
 
-# Establish connection to the AWS REDSHIFT(Data warehouse)
+# get the credential through config file
+config = config.ConfigParser()
+config.read_file(open('config_file.ini'))
+
+HOST_NAME = config.get('AWS', 'HOST_NAME')
+PORT_NO = config.get('AWS', 'PORT_NO')
+DB_NAME = config.get('AWS', 'DB_NAME')
+USER_NAME = config.get('AWS', 'USER_NAME')
+PASSWORD = config.get('AWS', 'PASSWORD')
+
 def establish_connection():
-    # get the credential through config file
-    # config = config.ConfigParser()
-    # config.read_file(open('config_file.ini'))
 
-    # host_name = config.get('AWS', 'HOST_NAME')
-    # port_no = config.get('AWS', 'PORT_NO')
-    # db_name = config.get('AWS', 'DB_NAME')
-    # user_name = config.get('AWS', 'USER_NAME')
-    # password = config.get('AWS', 'PASSWORD')
-
-    host_name = 'datapipeline-cluster.270149585494.us-east-1.redshift-serverless.amazonaws.com'
-    port_no = 5439
-    db_name = 'dev'
-    user_name = 'admin'
-    password = 'Nn12345678'
-
+    # Establish connection to the AWS REDSHIFT(Data warehouse)
     try:
-        conn = pg.connect(host = host_name, dbname = db_name, port = port_no, user = user_name, password = password)
+        conn = pg.connect(host = HOST_NAME, dbname = DB_NAME, port = USER_NAME, user = USER_NAME, password = PASSWORD)
         print("Connection Established")
     except pg.Error as e:
         print(e)
@@ -30,35 +25,27 @@ def establish_connection():
     cur = conn.cursor()
     return conn, cur
 
- # Create table schema in REDHSIFT data-base
 def create_schema():
+    # before creating schema, connection establishment required
     conn, cur = establish_connection()
-    table_creation_query = "CREATE TABLE IF NOT EXISTS weather_table(country varchar(15),city_name varchar(30), temperature float, sunrise DATE, sunset DATE, timezone DATE)"
+    
+     # Create table schema in REDSHIFT acc. to ingest data.
+    table_creation_query = "CREATE TABLE IF NOT EXISTS weather_table(country varchar(15),city_name varchar(30), temperature float, sunrise TIME, sunset TIME, timezone TIME)"
     try:
         cur.execute(table_creation_query)
         print('Table created')
     except pg.Error as e:
         print(e)
     conn.commit()
-
+    
+    #close connection
     close_connection(conn, cur)
 
- # Once all done, can be checked data from the table
-def display_table_data(cur):
-    cur.execute("SELECT * FROM weather_table")
-    data = cur.fetchall()
-    for row in data:
-        print(row)
 
 def close_connection(conn, cur):
     cur.close()
     conn.close()
 
 
-
+#run the function Manually if needed or else not needed
 create_schema()
-# display_table_data()
-
-
-
-        
