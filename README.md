@@ -18,7 +18,7 @@ API response is obtained as JSON data.
 The necessary credentials such as the host name, port number, database name, username, and password are retrieved from the configuration file (config_file.ini). If getting error, go with normal variable-value things.
 Establish Connection with redshift and create schema to store data.
 
-*Make sure to provide the correct credentials and have the necessary permissions to access the data warehouse: access key, secret key.
+*Make sure to provide the correct credentials and have the necessary permissions to access the data warehouse.
 
 # data_pipeline.py
 Import the necessary modules and classes from Airflow and other libraries.
@@ -33,7 +33,7 @@ Define the dependencies between the tasks using the >> operator.
  *schema_creation should run before transform_task.
  *transform_task should run before load_task.
 
-No need to run any file individually, the DAG is automatically scheduled to run. To execute the **data pipeline**, you need to start the Airflow scheduler and trigger the DAG either manually or based on the schedule interval you have specified.
+No need to run any file individually. **To execute the data pipeline, you need to start the Airflow scheduler and trigger the DAG either manually or based on the schedule interval you have specified**.
 
 # Please note that you need to have Airflow and its dependencies properly installed and configured for this code to work.
 if any query, feel free to ask on Linkedln. www.linkedin.com/in/nsk7
